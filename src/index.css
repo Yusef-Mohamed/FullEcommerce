@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+.btn {
+  @apply font-semibold rounded-lg shadow-md transition hover:text-gold hover:bg-dark;
+}
+.err {
+  font-size: 12px;
+  padding: 3px;
+  color: red;
+  display: none;
+}
+
+input:invalid[focused="true"] ~ .err {
+  display: block;
+}
+.nav-link {
+  @apply transition;
+}
+.nav-link:hover,
+.active {
+  @apply text-gold;
+}
+.dropdown-con:hover .dropdown {
+  @apply block;
+}
+.heading {
+  @apply relative;
+}
+.heading::before {
+  content: "";
+  @apply absolute w-full h-full border-b border-b-[3px] bottom-[44%] z-0 border-dashed border-dark;
+}
+.heading span {
+  @apply text-dark font-semibold relative z-10 bg-[#f5f5f5] p-2;
+}
+.heading.on span {
+  @apply bg-white;
+}
+.wish.on {
+  @apply text-red-600;
+}
+.h-filter li.on span {
+  @apply text-danger-500;
+}
+.toggle {
+}
+.toggle-box {
+  @apply hidden md:flex flex-1 transition;
+}
+.toggle-box.open {
+  @apply flex;
+}
