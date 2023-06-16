@@ -1,41 +1,38 @@
 import { useContext, useEffect, useState } from "react";
 import Logo from "./Logo";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import axios from "axios";
 import Cookies from "universal-cookie";
-import { CounterContext, SearchContext } from "../Pages/ShopPages";
-
+import { CounterContext } from "../Pages/ShopPages";
+import { Sidenav, initTE } from "tw-elements";
 function NavBar() {
+  initTE({ Sidenav });
   const counter = useContext(CounterContext);
-  const searsh = useContext(SearchContext);
 
   const [categories, setCategories] = useState([]);
-  const navigate = useNavigate();
-  const [filter, setFilter] = useState("");
-  // handel Search
-  const queryParams = new URLSearchParams(window.location.search);
-  useEffect(() => {
-    if (queryParams.get("keyword")) {
-      setFilter(queryParams.get("keyword"));
-    }
-  }, []);
-  const handleFilterChange = (event) => {
-    const data = event.target.value;
-    setFilter(data);
-    if (data) {
-      queryParams.set("keyword", data);
-    } else {
-      queryParams.delete("keyword");
-    }
-    navigate(`?${queryParams.toString()}`);
-    searsh.setSearsh((prev) => prev + 1);
-  };
 
   useEffect(() => {
     axios
       .get("https://node-api-v1.onrender.com/api/v1/categories")
       .then((res) => {
         setCategories(res.data.data);
+        console.log(
+          res.data.data.sort((a, b) =>
+            a.category.name.localeCompare(b.category.name)
+          )
+        );
+      })
+      .catch((err) => console.log(err));
+    axios
+      .get("https://reelstore.metafortech.com/api/v1/products ")
+      .then((res) => {
+        console.log(res);
+        // setCategories(res.data.data);
+        console.log(
+          res.data.data.sort((a, b) =>
+            a.category.name.localeCompare(b.category.name)
+          )
+        );
       })
       .catch((err) => console.log(err));
   }, []);
@@ -77,23 +74,7 @@ function NavBar() {
         <span className="hidden md:block">
           <Logo />
         </span>
-        <div className="flex ">
-          <input
-            type="text"
-            placeholder="Search"
-            className="border py-2 px-4 rounded-l-2xl block"
-            value={filter}
-            onChange={handleFilterChange}
-            onFocus={() =>
-              window.location.pathname === "/products"
-                ? true
-                : navigate("/products")
-            }
-          />
-          <button>
-            <i className="text-dark bg-gold py-3 border-gold border px-8 md:px-6 hover:bg-dark hover:text-gold hover:border-dark transition rounded-r-2xl  fa-solid fa-magnifying-glass"></i>
-          </button>
-        </div>
+        <div className="flex "></div>
         <div className="hidden md:block">
           <div className="text-gray-600 text-center text-sm">
             Customer servers
@@ -103,24 +84,38 @@ function NavBar() {
       </div>
       <div className="bg-dark text-white  font-semibold">
         <div className="container mx-auto flex flex-col md:flex-row items-center">
-          <div className="text-xl bg-gold py-6 w-fit text-dark px-2 dropdown-con relative z-50 hidden md:block">
-            <i className="fa-solid fa-bars ml-2 mr-4"></i>
-            Categories
-            <i className="mx-2 fa-sharp fa-solid fa-arrow-down"></i>
-            {/* dropdown */}
-            <div className="dropdown absolute py-3 w-full border rounded-lg bg-white  transition hidden mt-5 right-0">
-              <div className="flex gap-1 flex-col">
+          <div>
+            <button
+              className=" text-xl  py-6 w-fit  px-2  z-50  md:block hidden shadow-md transition duration-150 ease-in-out    text-dark bg-gold "
+              data-te-sidenav-toggle-ref
+              data-te-target="#sidenav-1"
+              aria-controls="#sidenav-1"
+              aria-haspopup="true"
+            >
+              <span className="block ">
+                <i className="fa-solid fa-bars ml-2 mr-4"></i>
+                Categories
+                <i className="mx-2 fa-sharp fa-solid fa-arrow-down"></i>
+              </span>
+            </button>
+            <nav
+              id="sidenav-1"
+              className="absolute left-0 top-0 z-[1035] h-full w-60 -translate-x-full overflow-hidden bg-dark p-4"
+              data-te-sidenav-init
+              data-te-sidenav-hidden="true"
+              data-te-sidenav-position="absolute"
+            >
+              <ul>
                 {categories.map((e) => (
                   <Link
                     key={e._id}
-                    className="p-1 px-3 hover:bg-slate-100 transition border-b border-dashed"
-                    to={`/products?category=${e._id}`}
+                    className="py-4 block border-b border-b-white"
                   >
                     {e.name}
                   </Link>
                 ))}
-              </div>
-            </div>
+              </ul>
+            </nav>
           </div>
           <div className="flex md:hidden items-center justify-between w-full">
             <div className="p-4 ">
@@ -158,13 +153,7 @@ function NavBar() {
             >
               Shoping Cart
             </NavLink>
-            <NavLink
-              activeclassname="active"
-              className="text-white font-semibold text-lg p-4 block nav-link"
-              to="/checkout"
-            >
-              Check Out
-            </NavLink>
+
             <div className="p-4 mt-0 md:p-0 md:mb-0 md:ml-auto flex">
               <div className="flex items-center">
                 <i className="fa-solid fa-heart text-xl mx-2 relative"></i>
@@ -188,6 +177,7 @@ function NavBar() {
           </div>
         </div>
       </div>
+      <div></div>
     </div>
   );
 }

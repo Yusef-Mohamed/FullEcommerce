@@ -40,8 +40,8 @@ input:invalid[focused="true"] ~ .err {
 .wish.on {
   @apply text-red-600;
 }
-.h-filter li.on span {
-  @apply text-danger-500;
+.h-filter li.on {
+  @apply border border-gold w-fit;
 }
 .toggle {
 }
@@ -50,4 +50,7 @@ input:invalid[focused="true"] ~ .err {
 }
 .toggle-box.open {
   @apply flex;
+}
+* {
+  font-family: "Poppins", sans-serif;
 }

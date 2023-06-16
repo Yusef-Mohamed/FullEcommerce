@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import payment from "../images/payments.png";
 function Footer() {
   return (
-    <div className="bg-dark text-white py-12">
+    <div className="bg-dark text-white py-12 mt-16">
       <div className="lg:grid lg:grid-cols-12 container mx-auto">
         <div className="lg:col-span-4 mb:4 lg:mb-0 p-2">
           <h2 className="mb-4 text-xl">GET IN TOUCH</h2>
@@ -86,7 +86,7 @@ function Footer() {
           </div>
         </div>
       </div>
-      <div className="md:flex justify-between  container mx-auto pt-6 border-t border-t-[#6c757d]">
+      <div className="md:flex justify-between  container mx-auto pt-12 border-t border-t-[#6c757d]">
         <span>
           All Rights Reserved. Designed by
           <a

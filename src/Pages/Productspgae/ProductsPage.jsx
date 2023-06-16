@@ -1,15 +1,13 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Filter from "./Filter";
 import axios from "axios";
 import Cookies from "universal-cookie";
 import ProductCard from "../../Components/ProductCard";
-import { SearchContext } from "../ShopPages";
 
 function ProductsPage() {
   const cookie = new Cookies();
   const token = cookie.get("Bearer");
   const [agian, setAgian] = useState(0);
-  const searsh = useContext(SearchContext);
   const [products, setProducts] = useState([]);
   const [wishList, setWishList] = useState([]);
   // get wishList
@@ -39,18 +37,22 @@ function ProductsPage() {
         setProducts(res.data.data);
       })
       .catch((err) => console.log(err));
-  }, [agian, searsh.searsh]);
+  }, [agian]);
   // Delete Stars From Link
   const queryParams = new URLSearchParams(window.location.search);
   useEffect(() => {
     queryParams.delete("ratingsAverage[gte]");
+    queryParams.delete("price[gte]");
+    queryParams.delete("price[lte]");
     const newUrl = `${window.location.pathname}?${queryParams.toString()}`;
     window.history.replaceState(null, "", newUrl);
   }, []);
   return (
     <>
       <div className="container grid-cols-12 grid mx-auto gap-4 my-16">
-        <Filter agian={agian} setAgian={setAgian} />
+        <div className="col-span-12 md:col-span-4">
+          <Filter agian={agian} setAgian={setAgian} />
+        </div>
         <div className="col-span-12 md:col-span-8">
           <div className="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-8 ">
             {products.map((product) => (

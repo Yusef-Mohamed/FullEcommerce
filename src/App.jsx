@@ -33,7 +33,6 @@ import VerifyResetCode from "./Pages/ForgetPassword/VerifyResetCode";
 import Shopingcart from "./Pages/Shopingcart";
 import { ToastContainer } from "react-toastify";
 import ShopPages from "./Pages/ShopPages";
-import CheckOut from "./Pages/Checkout/CheckOut";
 export default function App() {
   return (
     <div>
@@ -45,7 +44,6 @@ export default function App() {
           <Route path="product/:id" element={<Product />} />
           <Route path="products" element={<ProductsPage />} />
           <Route path="shopingcart" element={<Shopingcart />} />
-          <Route path="checkout" element={<CheckOut />} />
         </Route>
 
         {/* profile  */}

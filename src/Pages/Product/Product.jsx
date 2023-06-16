@@ -6,6 +6,7 @@ import { Carousel, initTE } from "tw-elements";
 import Reviews from "./Reviews";
 import Cookies from "universal-cookie";
 import { CounterContext } from "../ShopPages";
+import { toast } from "react-toastify";
 function Product() {
   initTE({ Carousel });
   const cookie = new Cookies();
@@ -72,7 +73,12 @@ function Product() {
           console.log(res);
           counter.setCounter((prev) => prev + 1);
         })
-        .catch((err) => console.log(err))
+        .catch((err) => {
+          console.log(err);
+          if (err.response.status == 401) {
+            toast.error("You must login before add items to Shoping Cart");
+          }
+        })
         .finally(() => setLoading(false));
     } else {
       axios
@@ -91,7 +97,12 @@ function Product() {
           console.log(res);
           counter.setCounter((prev) => prev + 1);
         })
-        .catch((err) => console.log(err))
+        .catch((err) => {
+          console.log(err);
+          if (err.response.status == 401) {
+            toast.error("You must login before add items to Shoping Cart");
+          }
+        })
         .finally(() => setLoading(false));
     }
   };

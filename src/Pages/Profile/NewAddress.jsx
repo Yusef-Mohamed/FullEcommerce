@@ -4,6 +4,9 @@ import axios from "axios";
 import Cookies from "universal-cookie";
 
 function NewAddress({ setRfresh }) {
+  const cookie = new Cookies();
+  const token = cookie.get("Bearer");
+
   const [errrr, setErrrr] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -72,8 +75,7 @@ function NewAddress({ setRfresh }) {
   const onChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
-  const cookie = new Cookies();
-  const token = cookie.get("Bearer");
+
   const handleSubmit = function (e) {
     e.preventDefault();
     setLoading(true);
@@ -103,11 +105,19 @@ function NewAddress({ setRfresh }) {
         });
         setRfresh((prev) => prev + 1);
       })
-      .catch((err) => setErrrr(err.response.data.errors[0].msg))
+      .catch((err) => {
+        // if (err.response.data.errors[0].msg) {
+        //   setErrrr(err.response.data.errors[0].msg);
+        // }
+        console.log(err);
+      })
       .finally(() => setLoading(false));
   };
   return (
-    <form onSubmit={(e) => handleSubmit(e)}>
+    <form
+      onSubmit={(e) => handleSubmit(e)}
+      className="bg-white mx-auto container rounded-lg p-4 my-4"
+    >
       {inputs.map((input) => (
         <FormInput
           key={input.id}

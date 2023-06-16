@@ -4,15 +4,21 @@ import Header from "../Components/Header";
 import Cookies from "universal-cookie";
 import { Outlet, useNavigate } from "react-router";
 import Sidebar from "../Components/Sidebar";
+import { useState } from "react";
 function Dashboard() {
   const cookie = new Cookies();
   let token = cookie.get("Bearer");
   let data = cookie.get("data");
 
   let nav = useNavigate();
-
-  if (!token && (data.role === "manager" || data.role === "admin")) {
-    nav("/login");
+  if (!token) {
+    setTimeout(() => {
+      nav("/login");
+    }, 1000);
+  } else if (!token && (data.role === "manager" || data.role === "admin")) {
+    setTimeout(() => {
+      nav("/login");
+    }, 1000);
   }
   return (
     <div className="h-screen">

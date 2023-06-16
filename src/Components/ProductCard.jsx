@@ -3,10 +3,10 @@ import { useContext } from "react";
 import { Link } from "react-router-dom";
 import Cookies from "universal-cookie";
 import { CounterContext } from "../Pages/ShopPages";
+import { toast } from "react-toastify";
 
 function ProductCard({ data, wish }) {
   const counter = useContext(CounterContext);
-  console.log(counter);
   const cookie = new Cookies();
   const token = cookie.get("Bearer");
   const handelWish = function (e) {
@@ -40,7 +40,12 @@ function ProductCard({ data, wish }) {
           console.log(res);
           counter.setCounter((prev) => prev + 1);
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          console.log(err.response.status);
+          if (err.response.status == 401) {
+            toast.error("You must login before add items to wish list");
+          }
+        });
     }
     e.target.classList.toggle("on");
   };

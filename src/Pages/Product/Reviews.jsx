@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import Cookies from "universal-cookie";
 
 function Reviews({ product }) {
@@ -12,8 +13,9 @@ function Reviews({ product }) {
   const cookie = new Cookies();
   const token = cookie.get("Bearer");
   const [data, setData] = useState(0);
+  const userData = cookie.get("data") || {};
   useEffect(() => {
-    setData(cookie.get("data")._id);
+    setData(userData._id);
   }, []);
   const handleRatingClick = (value) => {
     setRating(value);
@@ -66,7 +68,12 @@ function Reviews({ product }) {
           }
         )
         .then((res) => console.log(res))
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          console.log(err);
+          if (err.response.status == 401) {
+            toast.error("You must login before add review to product");
+          }
+        });
     }
     setLoading(false);
   };
