@@ -5,6 +5,7 @@ import axios from "axios";
 import Cookies from "universal-cookie";
 import { CounterContext } from "../Pages/ShopPages";
 import { Sidenav, initTE } from "tw-elements";
+import CateNav from "./CateNav";
 function NavBar() {
   initTE({ Sidenav });
   const counter = useContext(CounterContext);
@@ -100,19 +101,14 @@ function NavBar() {
             </button>
             <nav
               id="sidenav-1"
-              className="absolute left-0 top-0 z-[1035] h-full w-60 -translate-x-full overflow-hidden bg-dark p-4"
+              className="fixed left-0 top-0 z-[1035] h-full w-60 -translate-x-full overflow-hidden bg-dark p-4"
               data-te-sidenav-init
               data-te-sidenav-hidden="true"
-              data-te-sidenav-position="absolute"
+              data-te-sidenav-position="fixed"
             >
               <ul>
                 {categories.map((e) => (
-                  <Link
-                    key={e._id}
-                    className="py-4 block border-b border-b-white"
-                  >
-                    {e.name}
-                  </Link>
+                  <CateNav key={e.id} data={e} />
                 ))}
               </ul>
             </nav>

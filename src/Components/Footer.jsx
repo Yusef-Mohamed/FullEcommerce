@@ -49,12 +49,6 @@ function Footer() {
                   Shoping Cart
                 </Link>
               </li>
-              <li className="p-3">
-                <i className="text-xs fa-solid fa-angle-right mr-3"></i>
-                <Link to={"checkout"} className="hover:text-gold transition">
-                  Check Out
-                </Link>
-              </li>
             </ul>
           </div>
           <div className="col-span-2 p-2">

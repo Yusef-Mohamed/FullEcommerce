@@ -21,7 +21,6 @@ function ProductCard({ data, wish }) {
           }
         )
         .then((res) => {
-          console.log(res);
           counter.setCounter((prev) => prev + 1);
         })
         .catch((err) => console.log(err));
@@ -37,7 +36,6 @@ function ProductCard({ data, wish }) {
           }
         )
         .then((res) => {
-          console.log(res);
           counter.setCounter((prev) => prev + 1);
         })
         .catch((err) => {
@@ -50,9 +48,9 @@ function ProductCard({ data, wish }) {
     e.target.classList.toggle("on");
   };
   return (
-    <div className="block rounded-lg relative bg-gray-50 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:bg-neutral-700">
+    <div className="h-full block rounded-lg relative bg-gray-50 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:bg-neutral-700">
       <i
-        className={`fa-solid fa-heart wish absolute top-4 right-4 transition ${
+        className={`cursor-pointer fa-solid fa-heart wish absolute top-4 right-4 transition ${
           wish.includes(data._id) && "on"
         }`}
         onClick={(e) => handelWish(e)}
@@ -93,7 +91,7 @@ function ProductCard({ data, wish }) {
               ))}
               {data.ratingsAverage % 1 !== 0 && (
                 <span className="relative">
-                  <i className="fa-solid fa-star-half text-gold absolute top-0 left-0"></i>
+                  <i className="fa-solid fa-star-half text-gold absolute top-[3px] left-0"></i>
                   <i className="fa-solid fa-star-half text-dark fa-flip-horizontal  "></i>
                 </span>
               )}

@@ -54,3 +54,13 @@ input:invalid[focused="true"] ~ .err {
 * {
   font-family: "Poppins", sans-serif;
 }
+.cate-on i {
+  transform: rotate(90deg);
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+}
+.cate-on ul {
+  @apply block;
+}

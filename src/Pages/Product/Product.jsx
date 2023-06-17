@@ -70,7 +70,6 @@ function Product() {
           }
         )
         .then((res) => {
-          console.log(res);
           counter.setCounter((prev) => prev + 1);
         })
         .catch((err) => {
@@ -247,8 +246,32 @@ function Product() {
           <div className="lg:w-7/12 p-8 bg-white">
             <h2 className="t  text-xl font-medium">{product.title}</h2>
             <div className="text-dark py-2 text-lg">
-              {product.ratingsQuantity === 0 && "No Rating "}
+              {product.ratingsAverage && (
+                <>
+                  {[...Array(Math.floor(product.ratingsAverage))].map(
+                    (_, index) => (
+                      <i key={index} className="fa-solid fa-star text-gold"></i>
+                    )
+                  )}
+                  {product.ratingsAverage % 1 !== 0 && (
+                    <span className="relative">
+                      <i className="fa-solid fa-star-half text-gold absolute top-[3px] left-0"></i>
+                      <i className="fa-solid fa-star-half text-dark fa-flip-horizontal  "></i>
+                    </span>
+                  )}
+                  {[...Array(5 - Math.ceil(product.ratingsAverage))].map(
+                    (_, index) => (
+                      <i
+                        key={index + Math.ceil(product.ratingsAverage)}
+                        className="fa-solid fa-star text-dark"
+                      ></i>
+                    )
+                  )}
+                  ({product.ratingsQuantity})
+                </>
+              )}
             </div>
+
             <p className="text-dark">{product.description}</p>
             <form
               className="flex gap-4 py-6 items-center flex-col md:flex-row"

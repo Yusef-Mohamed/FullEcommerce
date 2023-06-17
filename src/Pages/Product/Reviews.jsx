@@ -1,19 +1,20 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Cookies from "universal-cookie";
+import { CounterContext } from "../ShopPages";
 
 function Reviews({ product }) {
   const [loading, setLoading] = useState(false);
   const [rating, setRating] = useState(1);
   const [text, setText] = useState("");
-  const [ref, setRef] = useState(0);
   const [myRewId, setMyRevId] = useState(0);
   const [edit, setEdit] = useState(false);
   const cookie = new Cookies();
   const token = cookie.get("Bearer");
   const [data, setData] = useState(0);
   const userData = cookie.get("data") || {};
+  const counter = useContext(CounterContext);
   useEffect(() => {
     setData(userData._id);
   }, []);
@@ -67,11 +68,13 @@ function Reviews({ product }) {
             },
           }
         )
-        .then((res) => console.log(res))
+        .then(() => counter.setCounter((prev) => prev + 1))
         .catch((err) => {
           console.log(err);
           if (err.response.status == 401) {
             toast.error("You must login before add review to product");
+          } else if (err.response.status == 400) {
+            toast.error("You Can not add 2 reviews in same product");
           }
         });
     }
@@ -84,7 +87,7 @@ function Reviews({ product }) {
           Authorization: "Bearer " + token,
         },
       })
-      .then(() => setRef((prev) => prev + 1))
+      .then(() => counter.setCounter((prev) => prev + 1))
       .catch((err) => console.log(err));
   };
   return (
@@ -106,48 +109,67 @@ function Reviews({ product }) {
             )}
             {product.reviews &&
               product.reviews.length !== 0 &&
-              product.reviews.map((e) => (
-                <div key={e._id} className="text-dark p-4 border">
-                  <div className="flex justify-between">
-                    <h2 className="mb-4">
-                      Review from {e.user.name} {e.user._id == data && "(You)"}
-                    </h2>
-                    {e.user._id == data && (
-                      <div>
-                        <button
-                          className="text-white px-2 p-1 bg-green-500 btn mx-2"
-                          onClick={(ele) => {
-                            setEdit(true);
-                            setText(e.title);
-                            setRating(e.ratings);
-                            setMyRevId(e._id);
-                          }}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          className="text-white px-2 p-1 bg-red-500 btn"
-                          onClick={(event) => deletee(e._id)}
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    )}
+              product.reviews.map((e) => {
+                return (
+                  <div key={e._id} className="text-dark p-4 border">
+                    <div className="flex justify-between">
+                      <h2 className="mb-4">
+                        Review from {e.user.name}{" "}
+                        {e.user._id == data && "(You)"}
+                      </h2>
+                      {e.user._id == data && (
+                        <div>
+                          <button
+                            className="text-white px-2 p-1 bg-green-500 btn mx-2"
+                            onClick={(ele) => {
+                              setEdit(true);
+                              setText(e.title);
+                              setRating(e.ratings);
+                              setMyRevId(e._id);
+                            }}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            className="text-white px-2 p-1 bg-red-500 btn"
+                            onClick={(event) => deletee(e._id)}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      <>
+                        {[...Array(Math.floor(e.ratings))].map((_, index) => (
+                          <i
+                            key={index}
+                            className="fa-solid fa-star text-gold"
+                          ></i>
+                        ))}
+                        {e.ratings % 1 !== 0 && (
+                          <span className="relative">
+                            <i className="fa-solid fa-star-half text-gold absolute top-[3px] left-0"></i>
+                            <i className="fa-solid fa-star-half text-dark fa-flip-horizontal  "></i>
+                          </span>
+                        )}
+                        {[...Array(5 - Math.ceil(e.ratings))].map(
+                          (_, index) => (
+                            <i
+                              key={index + Math.ceil(e.ratings)}
+                              className="fa-solid fa-star text-dark"
+                            ></i>
+                          )
+                        )}
+                      </>
+                    </div>
+                    <p className="my-4">{e.title}</p>
+                    <div className="text-right p-2">
+                      {e.updatedAt.split("T")[0]}
+                    </div>
                   </div>
-                  <div>
-                    {[...Array(e.ratings)].map((_, index) => (
-                      <i key={index} className="fa-solid fa-star text-gold"></i>
-                    ))}
-                    {[...Array(5 - e.ratings)].map((_, index) => (
-                      <i key={index} className="fa-solid fa-star text-dark"></i>
-                    ))}
-                  </div>
-                  <p className="my-4">{e.title}</p>
-                  <div className="text-right p-2">
-                    {e.updatedAt.split("T")[0]}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
           </div>
         </div>
         <div className="border-t-2 border-t-dark lg:border-none lg:w-1/2 p-8">

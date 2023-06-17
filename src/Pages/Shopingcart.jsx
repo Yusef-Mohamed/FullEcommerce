@@ -49,6 +49,25 @@ function Shopingcart() {
       })
       .catch((err) => console.log(err));
   }, [agian]);
+  const cleare = function () {
+    axios
+      .delete(
+        "https://node-api-v1.onrender.com/api/v1/cart",
+
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
+      )
+      .then((res) => {
+        console.log(res.data.data);
+        counter.setCounter((prev) => prev + 1);
+      })
+      .catch((err) => {
+        console.log(err.response.status);
+      });
+  };
   // Edit Cart Product  Amount
   const amountHanel = function (id, ammount) {
     axios
@@ -124,7 +143,9 @@ function Shopingcart() {
           }
         )
         .then((res) => {
+          console.log(res);
           console.log(res.data.session.url);
+          window.open(res.data.session.url);
 
           setTimeout(() => {
             counter.setCounter((prev) => prev + 1);
@@ -217,6 +238,12 @@ function Shopingcart() {
                 })}
             </tbody>
           </table>
+          <div
+            onClick={(e) => cleare()}
+            className="btn bg-gold text-dark px-4 w-fit my-4 mx-auto py-2 rounded-lg text-center"
+          >
+            Clear All
+          </div>
         </div>
         <div className=" lg:col-span-4 bg-white p-6 rounded-lg my-8 lg:my-0">
           <form className="flex  items-center" onSubmit={(e) => addCoupon(e)}>
@@ -310,7 +337,7 @@ function Shopingcart() {
                   className="mt-px inline-block pl-[0.15rem] hover:cursor-pointer"
                   htmlFor="online"
                 >
-                  Online
+                  Card
                 </label>
               </div>
             </div>
