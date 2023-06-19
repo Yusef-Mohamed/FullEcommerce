@@ -22,6 +22,7 @@ function Product() {
       await axios
         .get(`https://node-api-v1.onrender.com/api/v1/products/${id}`)
         .then((res) => {
+          console.log(res.data.data);
           setProduct(res.data.data);
           getCart(res.data.data._id);
         });
@@ -245,6 +246,16 @@ function Product() {
           </div>
           <div className="lg:w-7/12 p-8 bg-white">
             <h2 className="t  text-xl font-medium">{product.title}</h2>
+            <div className="text-dark text-xl py-4">
+              {product.priceAfterDiscount ? (
+                <>
+                  <span className="mr-3">${product.priceAfterDiscount}</span>
+                  <span className="line-through">${product.price}</span>
+                </>
+              ) : (
+                <span>${product.price}</span>
+              )}
+            </div>
             <div className="text-dark py-2 text-lg">
               {product.ratingsAverage && (
                 <>
