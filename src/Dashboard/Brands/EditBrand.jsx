@@ -1,67 +1,82 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
-import Cookies from "universal-cookie";
+import React from "react";
+import { apiRoute } from "../../App";
 function EditBrand() {
-  const [brandName, setBrandName] = useState(null);
+  const [brandArName, setBrandArName] = useState("");
+  const [brandEnName, setBrandEnName] = useState("");
   const [image, setImage] = useState(null);
   const [err, setErr] = useState(false);
 
   const [brandData, setBrandData] = useState({});
   const nav = useNavigate();
-  const cookie = new Cookies();
-  const token = cookie.get("Bearer");
+  let token = localStorage.getItem("token");
+
   const id = useParams().id;
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     axios
-      .get(`https://node-api-v1.onrender.com/api/v1/brands/${id}`, null, {
+      .get(`${apiRoute}/api/v1/brands/${id}`, null, {
         headers: {
           Authorization: "Bearer " + token,
         },
       })
       .then((res) => {
         setBrandData(res.data.data);
-        setBrandName(res.data.data.name);
+        setBrandArName(res.data.data.name_ar);
+        setBrandEnName(res.data.data.name_en);
         console.log(res.data.data.name);
       });
   }, []);
   let createBrand = async function (e) {
     e.preventDefault();
     const formData = new FormData();
-    formData.append("name", brandName);
-    formData.append("image", image);
-    if (brandName && image) {
-      setLoading(true);
-      setErr(false);
-      await axios
-        .put(`https://node-api-v1.onrender.com/api/v1/brands/${id}`, formData, {
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        })
-        .then((res) => {
-          console.log(res);
-          nav("/dashboard/brands");
-        })
-        .catch((err) => console.log(err));
-    } else {
-      setErr(true);
+    formData.append("name_ar", brandArName);
+    formData.append("name_en", brandEnName);
+    if (image) {
+      formData.append("image", image);
     }
+    setLoading(true);
+    setErr(false);
+    await axios
+      .put(`${apiRoute}/api/v1/brands/${id}`, formData, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      })
+      .then((res) => {
+        console.log(res);
+        nav("/dashboard/brands");
+      })
+      .catch((err) => console.log(err));
+
     setLoading(false);
   };
   return (
     <div className="p-8 ">
       <h2 className="font-semibold text-2xl ">Edits Brand</h2>
-      <form action="" className="my-5">
+      <form action="" className="my-5" onSubmit={(e) => createBrand(e)}>
         <div>
-          <label className="block my-4">Brand Name :</label>
+          <label className="block my-4">Brand Name Ar:</label>
           <input
             type="text"
             placeholder="Brand name"
             className="placeholder:text-gray-500 block border w-1/2 py-3 px-4 rounded-xl shadow-lg"
-            value={brandName}
-            onChange={(e) => setBrandName(e.target.value)}
+            value={brandArName}
+            required
+            onChange={(e) => setBrandArName(e.target.value)}
+          />
+        </div>
+        <div>
+          <label className="block my-4">Brand Name En:</label>
+          <input
+            type="text"
+            placeholder="Brand name"
+            className="placeholder:text-gray-500 block border w-1/2 py-3 px-4 rounded-xl shadow-lg"
+            value={brandEnName}
+            required
+            onChange={(e) => setBrandEnName(e.target.value)}
           />
         </div>
         <div>
@@ -96,7 +111,6 @@ function EditBrand() {
         )}
         <button
           type="submit"
-          onClick={(e) => createBrand(e)}
           className="btn text-gold bg-dark px-10 p-2 mx-auto"
         >
           {loading ? (

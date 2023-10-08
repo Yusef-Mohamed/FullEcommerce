@@ -1,18 +1,18 @@
 import { useState } from "react";
 import Header from "../Components/Header";
-import Cookies from "universal-cookie";
 
+import React from "react";
 import axios from "axios";
 import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
-import GoogleAuth from "../Components/GoogleAuth";
+import { apiRoute } from "../App";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
-  const cookie = new Cookies();
+
   const nav = useNavigate();
 
   let handel = async function (e) {
@@ -20,17 +20,16 @@ function Login() {
     try {
       setLoading(true);
       let res = await axios
-        .post(`https://node-api-v1.onrender.com/api/v1/auth/login`, {
+        .post(`${apiRoute}/api/v1/auth/login`, {
           email: email,
           password: password,
         })
         .finally(() => {
           setLoading(false);
         });
-      console.log(res);
-      cookie.set("Bearer", res.data.token);
-      cookie.set("data", res.data.data);
-      nav("/");
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("data", JSON.stringify(res.data.data));
+      nav("/dashboard");
     } catch (err) {
       console.log(err);
       setErr(err.response.data.message);
@@ -41,8 +40,6 @@ function Login() {
       <Header />
       <div className="flex-col w-full md:w-1/2 mx-auto flex-1 flex items-center justify-center">
         <div className="bg-white w-full">
-          <GoogleAuth text={"Login With Google"} />
-
           <form className="p-5  shadow-xl bg-dimWhite w-full" onSubmit={handel}>
             <h2 className="text-dark font-semibold text-2xl mb-10">Login</h2>
             <div>
@@ -69,12 +66,6 @@ function Login() {
               />
             </div>
             <span className="my-3 text-red-500">{err}</span>
-            <Link
-              to="/forgotPassword"
-              className=" hover:text-red-500 transition py-3 block "
-            >
-              Forgot Password
-            </Link>
 
             <button className="btn text-dark bg-gold w-full mt-5 p-3">
               {loading ? (

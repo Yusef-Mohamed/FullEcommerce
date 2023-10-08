@@ -2,25 +2,28 @@ import { useState } from "react";
 import logo from "../../images/no-image-icon-0.jpg";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import Cookies from "universal-cookie";
+import React from "react";
+import { apiRoute } from "../../App";
 function NewBrand() {
-  const [brandName, setBrandName] = useState(null);
+  const [brandArName, setBrandArName] = useState("");
+  const [brandEnName, setBrandEnName] = useState("");
   const [image, setImage] = useState(null);
   const [err, setErr] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const nav = useNavigate();
-  const cookie = new Cookies();
-  const token = cookie.get("Bearer");
+  let token = localStorage.getItem("token");
+
   let createBrand = async function (e) {
     e.preventDefault();
     const formData = new FormData();
-    formData.append("name", brandName);
+    formData.append("name_ar", brandArName);
+    formData.append("name_en", brandEnName);
     formData.append("image", image);
 
     setLoading(true);
     await axios
-      .post(`https://node-api-v1.onrender.com/api/v1/brands`, formData, {
+      .post(`${apiRoute}/api/v1/brands`, formData, {
         headers: {
           Authorization: "Bearer " + token,
         },
@@ -39,13 +42,23 @@ function NewBrand() {
       <h2 className="font-semibold text-2xl ">Create Brand</h2>
       <form className="my-5" onSubmit={createBrand}>
         <div>
-          <label className="block my-4">Brand Name :</label>
+          <label className="block my-4">Brand Name Ar :</label>
           <input
             required
             type="text"
             placeholder="Brand name"
             className="placeholder:text-gray-500 block border w-1/2 py-3 px-4 rounded-xl shadow-lg"
-            onChange={(e) => setBrandName(e.target.value)}
+            onChange={(e) => setBrandArName(e.target.value)}
+          />
+        </div>
+        <div>
+          <label className="block my-4">Brand Name En :</label>
+          <input
+            required
+            type="text"
+            placeholder="Brand name"
+            className="placeholder:text-gray-500 block border w-1/2 py-3 px-4 rounded-xl shadow-lg"
+            onChange={(e) => setBrandEnName(e.target.value)}
           />
         </div>
         <div>

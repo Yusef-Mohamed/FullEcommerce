@@ -2,8 +2,9 @@ import { useState } from "react";
 import logo from "../../images/no-image-icon-0.jpg";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import Cookies from "universal-cookie";
+import React from "react";
 import FormInput from "../../Components/FormInput";
+import { apiRoute } from "../../App";
 function NewUser() {
   const [errCode, setErrCode] = useState("");
   const [role, setRole] = useState("user");
@@ -11,8 +12,8 @@ function NewUser() {
   const [imageErr, setImageErr] = useState(false);
   const [loading, setLoading] = useState(false);
   const nav = useNavigate();
-  const cookie = new Cookies();
-  const token = cookie.get("Bearer");
+  let token = localStorage.getItem("token");
+
   const [values, setValues] = useState({
     username: "",
     email: "",
@@ -27,9 +28,6 @@ function NewUser() {
       name: "username",
       type: "text",
       placeholder: "Username",
-      errorMessage:
-        "Username should be 3-16 characters and shouldn't include any special character!",
-      pattern: "^[A-Za-z0-9]{3,16}$",
       label: "Username",
       required: true,
     },
@@ -59,10 +57,7 @@ function NewUser() {
       name: "password",
       type: "password",
       placeholder: "Password",
-      errorMessage:
-        "Password should be 8-20 characters and include at least 1 letter, 1 number and 1 special character!",
       label: "Password",
-      pattern: `^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$`,
       required: true,
     },
     {
@@ -103,7 +98,7 @@ function NewUser() {
       formData.append("profileImg", image);
       console.log(formData);
       await axios
-        .post(`https://node-api-v1.onrender.com/api/v1/users`, formData, {
+        .post(`${apiRoute}/api/v1/users`, formData, {
           headers: {
             Authorization: "Bearer " + token,
           },
@@ -116,9 +111,11 @@ function NewUser() {
         .catch((err) => {
           console.log(err);
           setErrCode(err.response.data.errors[0].msg);
+        })
+        .finally(() => {
+          setLoading(false);
         });
     }
-    setLoading(false);
   };
 
   return (

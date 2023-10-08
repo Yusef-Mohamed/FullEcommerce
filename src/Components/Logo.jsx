@@ -1,5 +1,3 @@
-import React from "react";
-
 function Logo({ style }) {
   return (
     <div className="flex">

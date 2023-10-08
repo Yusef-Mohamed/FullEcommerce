@@ -1,8 +1,8 @@
 import { NavLink } from "react-router-dom";
-
+import React from "react";
 function Sidebar() {
   return (
-    <div className="bg-dark h-full">
+    <div className="bg-dark h-full whitespace-nowrap">
       <NavLink
         activeclassname="active"
         className="text-white font-semibold text-lg p-4 block nav-link"
@@ -10,7 +10,7 @@ function Sidebar() {
       >
         <i className="md:mr-3 fa-solid fa-toolbox"></i>
 
-        <span className="hidden md:inline"> Dashboard</span>
+        <span className="hidden md:inline"> Orders</span>
       </NavLink>
       <NavLink
         activeclassname="active"

@@ -2,32 +2,34 @@ import axios from "axios";
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import Cookies from "universal-cookie";
+
+import { apiRoute } from "../../App";
 
 function Users() {
   const [users, setUsers] = useState([]);
   const [ref, setRef] = useState(0);
-  const cookie = new Cookies();
-  const token = cookie.get("Bearer");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pages, setPages] = useState(0);
+  let token = localStorage.getItem("token");
 
   // Get Brands
   useEffect(() => {
     axios
-      .get("https://node-api-v1.onrender.com/api/v1/users", {
+      .get(`${apiRoute}/api/v1/users?page=${currentPage}`, {
         headers: {
           Authorization: "Bearer " + token,
         },
       })
       .then((res) => {
-        console.log(res.data.data);
+        setPages(res.data.paginationResult.numberOfPages);
         setUsers(res.data.data);
       })
       .catch((err) => console.log(err));
-  }, [ref]);
+  }, [ref, currentPage]);
 
   const deletee = function (id) {
     axios
-      .delete(`https://node-api-v1.onrender.com/api/v1/users/${id}`, {
+      .delete(`${apiRoute}/api/v1/users/${id}`, {
         headers: {
           Authorization: "Bearer " + token,
         },
@@ -36,10 +38,8 @@ function Users() {
       .catch((err) => console.log(err));
   };
   return (
-    <div className="p-4 flex flex-col justify-center ">
-      <h2 className="font-semibold text-2xl w-full text-center mb-8">
-        Users Section
-      </h2>
+    <div className="p-4 flex flex-col justify-center overflow-hidden ">
+      <h2 className="font-semibold text-2xl text-center mb-8">Users Section</h2>
 
       <div className="overflow-x-auto w-[80%] md:w-full md:max-w-full">
         <table className="w-full">
@@ -55,7 +55,7 @@ function Users() {
                 <td>{user.name}</td>
                 <td>{user.email}</td>
                 <td>{user.role}</td>
-                <td>
+                <td className="flex">
                   <button
                     className="btn bg-red-500 text-white p-2 mr-2 w-20"
                     onClick={() => deletee(user._id)}
@@ -80,6 +80,25 @@ function Users() {
       >
         Create new user
       </Link>
+      {pages > 1 && (
+        <div className="flex items-center border border-slate-300 w-fit  my-4 mx-auto">
+          <button
+            onClick={() => setCurrentPage((prev) => prev - 1)}
+            disabled={currentPage === 1}
+            className="block px-8 text-center py-4 disabled:bg-gray-300 bg-green-500 disabled:cursor-not-allowed text-white"
+          >
+            Prev
+          </button>
+          <button className="block px-8 text-center py-4">{currentPage}</button>
+          <button
+            onClick={() => setCurrentPage((prev) => prev + 1)}
+            disabled={currentPage === pages}
+            className="block px-8 text-center py-4 disabled:bg-gray-300 disabled:cursor-not-allowed bg-green-500 text-white"
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 }

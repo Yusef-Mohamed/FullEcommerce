@@ -2,25 +2,30 @@ import axios from "axios";
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import Cookies from "universal-cookie";
+
+import { apiRoute } from "../../App";
 
 function Brand() {
   const [brands, setBrands] = useState([]);
   const [ref, setRef] = useState(0);
-  const cookie = new Cookies();
-  const token = cookie.get("Bearer");
-
+  let token = localStorage.getItem("token");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pages, setPages] = useState(4);
   // Get Brands
   useEffect(() => {
     axios
-      .get("https://node-api-v1.onrender.com/api/v1/brands")
-      .then((res) => setBrands(res.data.data))
+      .get(`${apiRoute}/api/v1/brands?page=${currentPage}`)
+      .then((res) => {
+        setPages(res.data.paginationResult.numberOfPages);
+
+        setBrands(res.data.data);
+      })
       .catch((err) => console.log(err));
-  }, [ref]);
+  }, [ref, currentPage]);
 
   const deletee = function (id) {
     axios
-      .delete(`https://node-api-v1.onrender.com/api/v1/brands/${id}`, {
+      .delete(`${apiRoute}/api/v1/brands/${id}`, {
         headers: {
           Authorization: "Bearer " + token,
         },
@@ -31,7 +36,6 @@ function Brand() {
   return (
     <div className="p-8 flex flex-col justify-center items-center">
       <h2 className="font-semibold text-2xl mb-8">Brands Section</h2>
-
       <div className="overflow-x-auto w-full md:max-w-full">
         <table className="w-full">
           <thead className="bg-dark text-white ">
@@ -42,7 +46,11 @@ function Brand() {
           <tbody>
             {brands.map((brand) => (
               <tr key={brand.id} className="text-center odd:bg-gray-100 my-2">
-                <td>{brand.name}</td>
+                <td>
+                  {brand?.name_ar}
+                  <br />
+                  {brand?.name_en}
+                </td>
                 <td>
                   <img
                     src={brand.image}
@@ -73,7 +81,26 @@ function Brand() {
         to="newbrand"
       >
         Create new Brand
-      </Link>
+      </Link>{" "}
+      {pages > 1 && (
+        <div className="flex items-center border border-slate-300 w-fit  my-4 mx-auto">
+          <button
+            onClick={() => setCurrentPage((prev) => prev - 1)}
+            disabled={currentPage === 1}
+            className="block px-8 text-center py-4 disabled:bg-gray-300 bg-green-500 disabled:cursor-not-allowed text-white"
+          >
+            Prev
+          </button>
+          <button className="block px-8 text-center py-4">{currentPage}</button>
+          <button
+            onClick={() => setCurrentPage((prev) => prev + 1)}
+            disabled={currentPage === pages}
+            className="block px-8 text-center py-4 disabled:bg-gray-300 disabled:cursor-not-allowed bg-green-500 text-white"
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 }

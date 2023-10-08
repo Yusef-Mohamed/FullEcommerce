@@ -64,3 +64,7 @@ input:invalid[focused="true"] ~ .err {
 .cate-on ul {
   @apply block;
 }
+select,
+input {
+  width: 100% !important;
+}

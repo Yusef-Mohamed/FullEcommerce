@@ -2,15 +2,13 @@ import { useEffect, useState } from "react";
 import logo from "../../images/no-image-icon-0.jpg";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
-import Cookies from "universal-cookie";
+import React from "react";
+import { apiRoute } from "../../App";
 function NewUser() {
   const [errCode, setErrCode] = useState("");
 
   const [name, setName] = useState("");
   const [nameErr, setNameErr] = useState(false);
-
-  const [email, setEmail] = useState(null);
-  const [email2, setEmail2] = useState(null);
 
   const [role, setRole] = useState("");
 
@@ -21,15 +19,15 @@ function NewUser() {
 
   const [loading, setLoading] = useState(false);
   const nav = useNavigate();
-  const cookie = new Cookies();
+
   const id = useParams().id;
 
-  const token = cookie.get("Bearer");
+  let token = localStorage.getItem("token");
 
   // Get User Old Data
   useEffect(() => {
     axios
-      .get(`https://node-api-v1.onrender.com/api/v1/Users/${id}`, {
+      .get(`${apiRoute}/api/v1/Users/${id}`, {
         headers: {
           Authorization: "Bearer " + token,
         },
@@ -38,8 +36,7 @@ function NewUser() {
         {
           console.log(res.data.data);
           setName(res.data.data.name);
-          setEmail(res.data.data.email);
-          setEmail2(res.data.data.email);
+
           setRole(res.data.data.role);
           setPhone(res.data.data.phone);
         }
@@ -51,18 +48,22 @@ function NewUser() {
     e.preventDefault();
 
     const formData = new FormData();
-    formData.append("name", name);
-    formData.append("role", role);
-    formData.append("phone", phone);
-    if (email !== email2) {
-      formData.append("email", email);
+    if (name) {
+      formData.append("name", name);
     }
+    if (phone) {
+      formData.append("phone", phone);
+    }
+    if (role) {
+      formData.append("role", role);
+    }
+
     if (image) {
       formData.append("profileImg", image);
     }
     console.log(formData);
     await axios
-      .put(`https://node-api-v1.onrender.com/api/v1/Users/${id}`, formData, {
+      .put(`${apiRoute}/api/v1/Users/${id}`, formData, {
         headers: {
           Authorization: "Bearer " + token,
         },
@@ -88,26 +89,12 @@ function NewUser() {
         <div>
           <label className="block my-4"> Name :</label>
           <input
-            required
             pattern="^[A-Za-z0-9]{3,16}$"
             type="text"
             placeholder="Name"
             value={name}
             className="placeholder:text-gray-500 block border w-1/2 py-3 px-4 rounded-xl shadow-lg"
             onChange={(e) => setName(e.target.value)}
-          />
-        </div>
-
-        {/* Email  */}
-        <div>
-          <label className="block my-4"> Email :</label>
-          <input
-            required
-            value={email}
-            type="email"
-            placeholder="Example@gmail.com"
-            className="placeholder:text-gray-500 block border w-1/2 py-3 px-4 rounded-xl shadow-lg"
-            onChange={(e) => setEmail(e.target.value)}
           />
         </div>
 
@@ -146,7 +133,6 @@ function NewUser() {
           <label className="block my-4"> Phone:</label>
           <input
             pattern="^[0-9]{10,16}$"
-            required
             type="text"
             placeholder="Phone"
             className="placeholder:text-gray-500 block border w-1/2 py-3 px-4 rounded-xl shadow-lg"

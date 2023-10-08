@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import React from "react";
 const FormInput = (props) => {
   const [focused, setFocused] = useState(false);
   const { label, errorMessage, onChange, id, ...inputProps } = props;
@@ -9,7 +9,7 @@ const FormInput = (props) => {
   };
 
   return (
-    <div className="formInput">
+    <div className="formInput my-4">
       <label className="block text-lg mb-3">{label}</label>
       <input
         className="bg-white border px-4 py-2 rounded-2xl w-full"

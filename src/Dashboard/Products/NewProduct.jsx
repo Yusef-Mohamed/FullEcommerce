@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 import logo from "../../images/no-image-icon-0.jpg";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import Cookies from "universal-cookie";
 
+import React from "react";
 import FormInput from "../../Components/FormInput";
+import { apiRoute } from "../../App";
 function NewProduct() {
-  const [errCode, setErrCode] = useState("");
+  const [errCode, setErrCode] = useState([]);
   const [image, setImage] = useState(null);
-  const [image2, setImage2] = useState(null);
+  const [image2, setImage2] = useState([]);
 
   const [cate, setCate] = useState([]);
   const [chosenCate, setChosenCate] = useState("");
@@ -21,31 +22,30 @@ function NewProduct() {
 
   const [loading, setLoading] = useState(false);
   const nav = useNavigate();
-  const cookie = new Cookies();
-  const token = cookie.get("Bearer");
+  let token = localStorage.getItem("token");
 
   // get cate
   useEffect(() => {
     axios
-      .get("https://node-api-v1.onrender.com/api/v1/categories")
+      .get(`${apiRoute}/api/v1/categories`)
       .then((res) => {
         setCate(res.data.data);
       })
       .catch((err) => console.log(err));
   }, []);
   useEffect(() => {
-    axios
-      .get(
-        `https://node-api-v1.onrender.com/api/v1/categories/${chosenCate}/subCategories`
-      )
-      .then((res) => {
-        setSubCate(res.data.data);
-      })
-      .catch((err) => console.log(err));
+    if (chosenCate) {
+      axios
+        .get(`${apiRoute}/api/v1/categories/${chosenCate}/subCategories`)
+        .then((res) => {
+          setSubCate(res.data.data);
+        })
+        .catch((err) => console.log(err));
+    }
   }, [chosenCate]);
   useEffect(() => {
     axios
-      .get("https://node-api-v1.onrender.com/api/v1/brands")
+      .get(`${apiRoute}/api/v1/brands`)
       .then((res) => {
         setBrand(res.data.data);
       })
@@ -53,39 +53,121 @@ function NewProduct() {
   }, []);
 
   const [values, setValues] = useState({
-    productname: "",
-    description: "",
+    title_ar: "",
+    title_en: "",
+    description_ar: "",
+    description_en: "",
+    shortDescription_ar: "",
+    shortDescription_en: "",
+    highlights_ar: "",
+    highlights_en: "",
     quantity: "",
-    sold: "",
     price: "",
     priceAfterDiscount: "",
     colors: "",
+    size_EU: "",
+    size_UK: "",
+    size_US: "",
+    size_Japan: "",
+    size_ChinaTops: "",
+    size_ChinaButtoms: "",
+    size_korea: "",
+    size_Mexico: "",
+    size_Brazil: "",
+    size_CM: "",
+    size_In: "",
+    size_italy: "",
+    size_france: "",
+    sizes: "",
   });
 
   const inputs = [
     {
       id: 1,
-      name: "productname",
+      name: "title_ar",
       type: "text",
-      placeholder: "product name",
+      placeholder: "product name ar",
       errorMessage: "Product Name should be more than 3 characters",
       pattern: "{3,}$",
-      label: "Product Name :",
+      label: "Product Name Ar :",
+      minLength: 3,
       required: true,
     },
-
     {
       id: 2,
-      name: "description",
+      name: "title_en",
       type: "text",
-      placeholder: "Description",
-      errorMessage: "Description should be more than 16 characters",
-      pattern: "{16,}$",
-      label: "Description :",
+      placeholder: "product name en",
+      errorMessage: "Product Name should be more than 3 characters",
+      pattern: "{3,}$",
+      minLength: 3,
+      label: "Product Name En :",
       required: true,
     },
     {
       id: 3,
+      name: "description_ar",
+      type: "text",
+      placeholder: "Description Ar",
+      errorMessage: "Description should be more than 16 characters",
+      pattern: "{16,}$",
+      minLength: 20,
+      label: "Description Ar:",
+      required: true,
+    },
+    {
+      id: 4,
+      name: "description_en",
+      type: "text",
+      placeholder: "Description En",
+      errorMessage: "Description should be more than 16 characters",
+      pattern: "{16,}$",
+      minLength: 20,
+      label: "Description En:",
+      required: true,
+    },
+    {
+      id: 5,
+      name: "shortDescription_ar",
+      minLength: 20,
+      type: "text",
+      placeholder: " Description En",
+      errorMessage: "Description should be more than 16 characters",
+      pattern: "{16,}$",
+      label: "Short Description Ar:",
+      required: true,
+    },
+    {
+      id: 6,
+      name: "shortDescription_en",
+      minLength: 20,
+      type: "text",
+      placeholder: "Description En",
+      errorMessage: "Description should be more than 16 characters",
+      pattern: "{16,}$",
+      label: "Short Description En:",
+      required: true,
+    },
+    {
+      id: 7,
+      name: "highlights_ar",
+      type: "text",
+      placeholder: "highlight1 / highlight2",
+      errorMessage: "Description should be more than 16 characters",
+      pattern: "{16,}$",
+      label: "Highlights Ar:",
+    },
+    {
+      id: 8,
+      name: "highlights_en",
+      type: "text",
+      placeholder: "highlight1 / highlight2",
+      errorMessage: "Description should be more than 16 characters",
+      pattern: "{16,}$",
+      label: "Highlights En:",
+    },
+    {
+      id: 9,
       name: "quantity",
       type: "number",
       placeholder: "Quantity",
@@ -94,18 +176,9 @@ function NewProduct() {
       min: 5,
       required: true,
     },
+
     {
-      id: 4,
-      name: "sold",
-      type: "number",
-      placeholder: "Sold",
-      errorMessage: "Sold must be more than 1",
-      label: "Sold :",
-      min: 1,
-      required: true,
-    },
-    {
-      id: 5,
+      id: 11,
       name: "price",
       type: "number",
       placeholder: "Price",
@@ -115,7 +188,7 @@ function NewProduct() {
       required: true,
     },
     {
-      id: 6,
+      id: 12,
       name: "priceAfterDiscount",
       type: "number",
       placeholder: "Price After Discount",
@@ -124,11 +197,109 @@ function NewProduct() {
       max: values.price - 1,
     },
     {
-      id: 7,
+      id: 13,
       name: "colors",
       type: "type",
       placeholder: "color1 / color2",
       label: "Colors: ",
+    },
+    {
+      id: 14,
+      name: "sizes",
+      type: "type",
+      placeholder: "size1 / size2",
+      label: "sizes: ",
+    },
+    {
+      id: 14,
+      name: "size_france",
+      type: "type",
+      placeholder: "size1 / size2",
+      label: "size_france: ",
+    },
+    {
+      id: 14,
+      name: "size_italy",
+      type: "type",
+      placeholder: "size1 / size2",
+      label: "size_italy: ",
+    },
+    {
+      id: 14,
+      name: "size_EU",
+      type: "type",
+      placeholder: "size1 / size2",
+      label: "size_EU: ",
+    },
+    {
+      id: 14,
+      name: "size_UK",
+      type: "type",
+      placeholder: "size1 / size2",
+      label: "size_UK: ",
+    },
+    {
+      id: 14,
+      name: "size_US",
+      type: "type",
+      placeholder: "size1 / size2",
+      label: "size_US: ",
+    },
+    {
+      id: 14,
+      name: "size_Japan",
+      type: "type",
+      placeholder: "size1 / size2",
+      label: "size_Japan: ",
+    },
+    {
+      id: 14,
+      name: "size_ChinaTops",
+      type: "type",
+      placeholder: "size1 / size2",
+      label: "size_ChinaTops: ",
+    },
+    {
+      id: 14,
+      name: "size_ChinaButtoms",
+      type: "type",
+      placeholder: "size1 / size2",
+      label: "size_ChinaButtoms: ",
+    },
+    {
+      id: 14,
+      name: "size_korea",
+      type: "type",
+      placeholder: "size1 / size2",
+      label: "size_korea: ",
+    },
+    {
+      id: 14,
+      name: "size_Mexico",
+      type: "type",
+      placeholder: "size1 / size2",
+      label: "size_Mexico: ",
+    },
+    {
+      id: 14,
+      name: "size_Brazil",
+      type: "type",
+      placeholder: "size1 / size2",
+      label: "size_Brazil: ",
+    },
+    {
+      id: 14,
+      name: "size_CM",
+      type: "type",
+      placeholder: "size1 / size2",
+      label: "size_CM: ",
+    },
+    {
+      id: 14,
+      name: "size_In",
+      type: "type",
+      placeholder: "size1 / size2",
+      label: "size_In: ",
     },
   ];
   const onChange = (e) => {
@@ -139,15 +310,21 @@ function NewProduct() {
     e.preventDefault();
     setLoading(true);
     const formData = new FormData();
+    formData.append("title_en", values.title_en);
 
-    formData.append("title", values.productname);
-    formData.append("description", values.description);
+    formData.append("title_ar", values.title_ar);
+    formData.append("description_ar", values.description_ar);
+    formData.append("description_en", values.description_en);
+    formData.append("shortDescription_ar", values.shortDescription_ar);
+    formData.append("shortDescription_en", values.shortDescription_en);
     formData.append("quantity", values.quantity);
-    formData.append("sold", values.sold);
     formData.append("price", values.price);
     formData.append("imageCover", image);
     formData.append("category", chosenCate);
-    formData.append("subCategories", chosenSubCate);
+
+    if (chosenSubCate) {
+      formData.append("subCategories", chosenSubCate);
+    }
     if (values.priceAfterDiscount) {
       formData.append("priceAfterDiscount", values.priceAfterDiscount);
     }
@@ -156,35 +333,106 @@ function NewProduct() {
         formData.append("colors", ele)
       );
     }
+    if (values.highlights_ar) {
+      [...values.highlights_ar.split("/")].map((ele) =>
+        formData.append("highlights_ar", ele)
+      );
+    }
+    if (values.highlights_en) {
+      [...values.highlights_en.split("/")].map((ele) =>
+        formData.append("highlights_en", ele)
+      );
+    }
+    if (values.size_EU) {
+      [...values.size_EU.split("/")].map((ele) =>
+        formData.append("size_EU", ele)
+      );
+    }
+    if (values.size_UK) {
+      [...values.size_UK.split("/")].map((ele) =>
+        formData.append("size_UK", ele)
+      );
+    }
+    if (values.size_US) {
+      [...values.size_US.split("/")].map((ele) =>
+        formData.append("size_US", ele)
+      );
+    }
+    if (values.sizes) {
+      [...values.sizes.split("/")].map((ele) => formData.append("sizes", ele));
+    }
+    if (values.size_Japan) {
+      [...values.size_Japan.split("/")].map((ele) =>
+        formData.append("size_Japan", ele)
+      );
+    }
+    if (values.size_ChinaTops) {
+      [...values.size_ChinaTops.split("/")].map((ele) =>
+        formData.append("size_ChinaTops", ele)
+      );
+    }
+    if (values.size_france) {
+      [...values.size_france.split("/")].map((ele) =>
+        formData.append("size_france", ele)
+      );
+    }
+    if (values.size_italy) {
+      [...values.size_italy.split("/")].map((ele) =>
+        formData.append("size_italy", ele)
+      );
+    }
+    if (values.size_ChinaButtoms) {
+      [...values.size_ChinaButtoms.split("/")].map((ele) =>
+        formData.append("size_ChinaButtoms", ele)
+      );
+    }
+    if (values.size_korea) {
+      [...values.size_korea.split("/")].map((ele) =>
+        formData.append("size_korea", ele)
+      );
+    }
+    if (values.size_Mexico) {
+      [...values.size_Mexico.split("/")].map((ele) =>
+        formData.append("size_Mexico", ele)
+      );
+    }
+    if (values.size_Brazil) {
+      [...values.size_Brazil.split("/")].map((ele) =>
+        formData.append("size_Brazil", ele)
+      );
+    }
+    if (values.size_CM) {
+      [...values.size_CM.split("/")].map((ele) =>
+        formData.append("size_CM", ele)
+      );
+    }
+    if (values.size_In) {
+      [...values.size_In.split("/")].map((ele) =>
+        formData.append("size_In", ele)
+      );
+    }
+
     if (image2) {
       image2.map((img) => formData.append("images", img));
     }
     if (chosenBrand) {
       formData.append("brand", chosenBrand);
     }
-    for (const entry of formData.entries()) {
-      const [key, value] = entry;
-      console.log(key, value);
-    }
-
     await axios
-      .post(`https://node-api-v1.onrender.com/api/v1/products`, formData, {
+      .post(`${apiRoute}/api/v1/products`, formData, {
         headers: {
           Authorization: "Bearer " + token,
         },
       })
       .then((res) => {
         console.log(res);
-
         nav("/dashboard/products");
       })
       .catch((err) => {
-        console.log(err);
-        setErrCode(err.response.data.errors[0].msg);
+        setErrCode(err.response.data.errors);
       });
     setLoading(false);
   };
-
   return (
     <div className="p-8 min-h-full">
       <h2 className="font-semibold text-2xl ">Create Product</h2>
@@ -198,6 +446,7 @@ function NewProduct() {
           />
         ))}
         {/* Cate*/}
+
         <div>
           <label className="block my-4">Category :</label>
           <select
@@ -213,7 +462,7 @@ function NewProduct() {
 
             {cate.map((cate) => (
               <option key={cate._id} value={cate._id}>
-                {cate.name}
+                {cate.name_en}-{cate.name_ar}
               </option>
             ))}
           </select>
@@ -222,7 +471,6 @@ function NewProduct() {
         <div>
           <label className="block my-4">SubCategory :</label>
           <select
-            required
             className=" block border w-1/2 py-3 px-4 rounded-xl shadow-lg"
             onChange={(e) => {
               setChosenSubCate(e.target.value);
@@ -237,7 +485,7 @@ function NewProduct() {
                 value={cate._id}
                 className="my-2 aria-selected:bg-dark aria-selected:text-gold"
               >
-                {cate.name}
+                {cate.name_en}-{cate.name_ar}
               </option>
             ))}
           </select>
@@ -256,7 +504,7 @@ function NewProduct() {
             </option>
             {brand.map((brand) => (
               <option key={brand._id} value={brand._id}>
-                {brand.name}
+                {brand.name_en}-{brand.name_ar}
               </option>
             ))}
           </select>
@@ -277,22 +525,14 @@ function NewProduct() {
                 }
               }}
             />
-            <div className="w-32 h-32 bg-gray-600">
-              {image && (
-                <img
-                  src={URL.createObjectURL(image)}
-                  className="w-32 h-32 block object-contain"
-                  alt=""
-                />
-              )}
-              {!image && (
-                <img
-                  src={logo}
-                  className="w-32 h-32 block object-contain"
-                  alt=""
-                />
-              )}
-            </div>
+            {image && (
+              <img
+                src={URL.createObjectURL(image)}
+                className="w-32 h-32 block object-contain"
+                alt=""
+              />
+            )}
+            {!image && <div className="w-32 h-32 bg-gray-600"></div>}
           </div>
         </div>
         {/* Image  */}
@@ -308,26 +548,28 @@ function NewProduct() {
                 setImage2([...e.target.files]);
               }}
             />
-            <div className="w-32 h-32 bg-gray-600">
-              {image && (
+            {image2?.length !== 0 &&
+              image2?.map((e, ind) => (
                 <img
-                  src={URL.createObjectURL(image)}
+                  key={ind}
+                  src={URL.createObjectURL(e)}
                   className="w-32 h-32 block object-contain"
                   alt=""
                 />
-              )}
-              {!image && (
-                <img
-                  src={logo}
-                  className="w-32 h-32 block object-contain"
-                  alt=""
-                />
-              )}
-            </div>
+              ))}
+
+            {image2.length === 0 && (
+              <div className="w-32 h-32 bg-gray-600"></div>
+            )}
           </div>
         </div>
 
-        {errCode !== "" && <p className="text-red-500 my-2">{errCode}</p>}
+        {errCode?.length !== 0 &&
+          errCode?.map((err, ind) => (
+            <p key={ind} className="text-red-500 my-2">
+              {err.msg}
+            </p>
+          ))}
         <button
           type="submit"
           className="btn text-gold bg-dark px-10 p-2 mx-auto"

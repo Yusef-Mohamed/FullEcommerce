@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
-import Cookies from "universal-cookie";
+import React from "react";
+
 import FormInput from "../../Components/FormInput";
+import { apiRoute } from "../../App";
 function EditCoupon() {
   const id = useParams().id;
 
   const [errCode, setErrCode] = useState("");
   const [loading, setLoading] = useState(false);
   const nav = useNavigate();
-  const cookie = new Cookies();
-  const token = cookie.get("Bearer");
+  let token = localStorage.getItem("token");
+
   const [values, setValues] = useState({
     name: "",
     date: "",
@@ -18,7 +20,7 @@ function EditCoupon() {
   });
   useEffect(() => {
     axios
-      .get(`https://node-api-v1.onrender.com/api/v1/coupons//${id}`, {
+      .get(`${apiRoute}/api/v1/coupons//${id}`, {
         headers: {
           Authorization: "Bearer " + token,
         },

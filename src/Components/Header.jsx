@@ -1,32 +1,21 @@
 import { useState } from "react";
 
 import { Link, useNavigate } from "react-router-dom";
-import Cookies from "universal-cookie";
 
+import React from "react";
 function Header() {
-  const cookie = new Cookies();
-  let data = cookie.get("data");
-  let token = cookie.get("Bearer");
+  let data = JSON.parse(localStorage.getItem("data"));
+  let token = localStorage.getItem("token");
   let [ref, setRef] = useState(0);
   let nav = useNavigate();
   let logout = function () {
-    cookie.remove("data");
-    cookie.remove("Bearer");
+    localStorage.clear;
     setRef((perv) => perv + 1);
     nav("/");
   };
   return (
     <div className="py-3 bg-white ">
       <div className="container mx-auto flex justify-center px-8 items-center">
-        <div>
-          <Link
-            className="p-1 hover:bg-slate-200 transition p-2 border rounded-lg "
-            to="/"
-          >
-            <i className="fa-solid fa-house mr-2 "></i>
-            Home
-          </Link>
-        </div>
         <div className="Acc dropdown-con flex gap-4">
           <div className="font-semibold hover:bg-slate-200 p-1 transition rounded-lg relative drophov">
             <i className="fa-solid fa-user mx-2"></i>
@@ -36,30 +25,13 @@ function Header() {
             <div className="dropdown absolute py-3 w-full border rounded-lg bg-white hidden transition ">
               {!token && (
                 <div className="flex gap-1 flex-col">
-                  <Link
-                    className="p-1 hover:bg-slate-100 transition"
-                    to="/register"
-                  >
-                    <i className="fa-solid fa-user mx-2"></i>
-                    Register
-                  </Link>
-                  <Link
-                    className="p-1 hover:bg-slate-100 transition"
-                    to="/login"
-                  >
+                  <Link className="p-1 hover:bg-slate-100 transition" to="/">
                     <i className="fa-regular fa-pen-to-square mx-2"></i> Login
                   </Link>
                 </div>
               )}
               {token && (
                 <div className="flex gap-1 flex-col">
-                  <Link
-                    to="/profile"
-                    className="p-1 hover:bg-slate-100 transition"
-                  >
-                    <i className="fa-solid fa-user mx-2"></i>
-                    Profile
-                  </Link>
                   <button
                     className="p-1 hover:bg-slate-100 transition text-left"
                     onClick={logout}
