@@ -26,8 +26,7 @@ function EditCoupon() {
         },
       })
       .then((res) => {
-        console.log(res.data.data);
-        console.log(res.data.data.discount);
+        console.log(res);
         setValues({
           name: res.data.data.name,
           date: res.data.data.expire.split("T")[0],
@@ -35,8 +34,6 @@ function EditCoupon() {
         });
       });
   }, []);
-  console.log(values);
-
   // setValues({ ...values, [e.target.name]: e.target.value });
   const inputs = [
     {
@@ -81,15 +78,13 @@ function EditCoupon() {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
 
-  let createBrand = async function (e) {
+  let EditCoupon = async function (e) {
     e.preventDefault();
-
     setLoading(true);
-
     await axios
       .put(
-        `https://node-api-v1.onrender.com/api/v1/coupons/${id}`,
-        { name: values.name, expire: values.date, discount: values.discount },
+        `${apiRoute}/api/v1/coupons/${id}`,
+        { discount: values.discount, name: values.name, expire: values.date },
         {
           headers: {
             Authorization: "Bearer " + token,
@@ -98,21 +93,19 @@ function EditCoupon() {
       )
       .then((res) => {
         console.log(res);
-
         nav("/dashboard/coupon");
       })
       .catch((err) => {
         console.log(err);
         setErrCode(err.response.data.errors[0].msg);
       });
-
     setLoading(false);
   };
 
   return (
     <div className="p-8 min-h-full">
       <h2 className="font-semibold text-2xl ">Edit Coupon</h2>
-      <form action="" className="my-5" onSubmit={(e) => createBrand(e)}>
+      <form action="" className="my-5" onSubmit={(e) => EditCoupon(e)}>
         {inputs.map((input) => (
           <FormInput
             key={input.id}
