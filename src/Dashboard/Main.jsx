@@ -53,7 +53,14 @@ function Main() {
             <tr>
               <th className="p-3">Owner Name</th>
               <th className="p-3">Paid</th>
+              <th className="p-3">Paid at</th>
               <th className="p-3">Delivered</th>
+              <th className="p-3">Delivered at</th>
+              <th className="p-3">Arrival Time</th>
+              <th className="p-3">Shipping city</th>
+              <th className="p-3">Shipping details</th>
+              <th className="p-3">Shipping phone</th>
+              <th className="p-3">Shipping postalCode</th>
               <th className="p-3">Total Price</th>
               <th className="p-3">Actions</th>
             </tr>
@@ -63,7 +70,53 @@ function Main() {
               <tr key={order.id}>
                 <td className="p-3">{order?.user?.name}</td>
                 <td className="p-3">{order.isPaid ? "yes" : "no"}</td>
-                <td className="p-3">{order.isDelivered ? "yes" : "no"}</td>
+                <td className="p-3 whitespace-nowrap">
+                  {order.paidAt ? (
+                    <>
+                      {new Date(order?.paidAt).toISOString().split("T")[0]}{" "}
+                      time:
+                      {new Date(order?.paidAt)
+                        .toISOString()
+                        .split("T")[1]
+                        .slice(0, 2)}
+                    </>
+                  ) : (
+                    "no"
+                  )}
+                </td>
+                <td className="p-3">{order.isDelivered ? "yes" : "no"}</td>{" "}
+                <td className="p-3 whitespace-nowrap">
+                  {order?.deliveredAt ? (
+                    <>
+                      {new Date(order?.deliveredAt).toISOString().split("T")[0]}{" "}
+                      time:
+                      {new Date(order?.deliveredAt)
+                        .toISOString()
+                        .split("T")[1]
+                        .slice(0, 2)}
+                    </>
+                  ) : (
+                    "no"
+                  )}
+                </td>
+                <td className="p-3 whitespace-nowrap">
+                  {order?.arrivalTime ? (
+                    <>
+                      {new Date(order?.arrivalTime).toISOString().split("T")[0]}{" "}
+                      time:
+                      {new Date(order?.arrivalTime)
+                        .toISOString()
+                        .split("T")[1]
+                        .slice(0, 2)}
+                    </>
+                  ) : (
+                    "no"
+                  )}
+                </td>
+                <td className="p-3">{order?.shippingAddress?.city}</td>
+                <td className="p-3">{order?.shippingAddress?.details}</td>
+                <td className="p-3">{order?.shippingAddress?.phone}</td>
+                <td className="p-3">{order?.shippingAddress?.postalCode}</td>
                 <td className="p-3">{order.totalOrderPrice}</td>
                 <tr className="flex items-center justify-center gap-4">
                   <button
@@ -86,46 +139,49 @@ function Main() {
       </div>
       {productShow.length !== 0 && (
         <div className="bg-black bg-opacity-75 flex items-center justify-center fixed top-0 h-full w-full right-0">
-          <div className="container mx-auto p-4 bg-white rounded-xl">
-            <table className="w-full text-center">
-              <thead className="bg-dark text-white">
-                <tr>
-                  <th className="p-3">Product</th>
-                  <th className="p-3">Product id</th>
-                  <th className="p-3">Product Image</th>
-                  <th className="p-3">Quantity</th>
-                  <th className="p-3">Price</th>
-                  <th className="p-3">Color</th>
-                  <th className="p-3">Size</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {productShow.map((product) => (
-                  <tr key={product.id}>
-                    <td className="p-3">
-                      {product?.product?.title_ar}-{product?.product?.title_en}
-                    </td>
-                    <td
-                      className="p-3 hover:text-green-600 transition-all cursor-pointer"
-                      onClick={() => onCopy(product?.product._id)}
-                    >
-                      {product?.product._id}
-                    </td>
-                    <td className="p-3">
-                      <img
-                        src={product?.product?.imageCover}
-                        className="w-12 mx-auto"
-                        alt=""
-                      />
-                    </td>
-                    <td className="p-3">{product.quantity}</td>
-                    <td className="p-3">{product.price}</td>
-                    <td className="p-3">{product.color}</td>
-                    <td className="p-3">{product.size}</td>
+          <div className="container  p-4 bg-white rounded-xl">
+            <div className="overflow-x-auto w-[95%] md:w-full md:max-w-full">
+              <table className="w-full text-center ">
+                <thead className="bg-dark text-white">
+                  <tr>
+                    <th className="p-3">Product</th>
+                    <th className="p-3">Product id</th>
+                    <th className="p-3">Product Image</th>
+                    <th className="p-3">Quantity</th>
+                    <th className="p-3">Price</th>
+                    <th className="p-3">Color</th>
+                    <th className="p-3">Size</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {productShow.map((product) => (
+                    <tr key={product.id}>
+                      <td className="p-3">
+                        {product?.product?.title_ar}-
+                        {product?.product?.title_en}
+                      </td>
+                      <td
+                        className="p-3 hover:text-green-600 transition-all cursor-pointer"
+                        onClick={() => onCopy(product?.product._id)}
+                      >
+                        {product?.product._id}
+                      </td>
+                      <td className="p-3">
+                        <img
+                          src={product?.product?.imageCover}
+                          className="w-12 mx-auto"
+                          alt=""
+                        />
+                      </td>
+                      <td className="p-3">{product.quantity}</td>
+                      <td className="p-3">{product.price}</td>
+                      <td className="p-3">{product.color}</td>
+                      <td className="p-3">{product.size}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
             <button
               onClick={() => setProductShow([])}
               className="px-8 py-2 rounded-md font-semibold text-white mt-4 block w-fit mx-auto bg-rose-500"
